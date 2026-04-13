@@ -36,6 +36,17 @@ LETTER_TO_NUMBER = {
 # Replace this comment with your implementation of the PhoneNumber class and
 # the `read_numbers()` function.
 
+def read_numbers(path):
+    regex_reader = r"""
+    (?xm)
+    #everything before the tab
+    ^
+    (?P<name>[^\t]*)
+    \t
+    #the entire number
+    (?P<number>.*)
+     """
+    
 
 def main(path):
     """Read data from path and print results.
