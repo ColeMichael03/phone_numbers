@@ -43,7 +43,7 @@ class PhoneNumber:
         #error handling
         if not isinstance(p_num, (str, int)):
             raise TypeError("INPUT MUST BE INT OR STR")
-        
+             
         #make phonenumber a str of capital letters
         p_num = str(p_num).upper()
         
@@ -55,6 +55,33 @@ class PhoneNumber:
         digits = re.sub(r"\D", "", digits)
         print(digits)
         self.number = digits
+
+        #After we have just numbers, we need to do validation.
+        #1. is the length 10 (or 11 AND starts with 1)
+        #2.does area code / exchange code begin with 0 or 1 OR end in 11
+        #need to do step 2 differently for 10 vs 11 length.
+        if len(digits) == 10:
+            if(digits[0] == "0" or digits[0] == "1" or digits[1:2] == "11" or \
+                digits[3] == "0" or digits[3] == "1" or digits[4:5] == "11"):
+                
+                raise ValueError("Invalid number provided.")
+            else:
+                self.area_code = digits[0:2]
+                self.area_code = digits[3:5]
+                self.exchange_number = digits[6:9]
+         
+        elif len(digits) == 11:
+            
+            if(digits[1] == "0" or digits[1] == "1" or digits[2:3] == "11" or \
+                digits[4] == "0" or digits[4] == "1" or digits[5:6] == "11"):
+                
+                raise ValueError("Invalid number provided.")
+            else:
+                self.area_code = digits[1:3]
+                self.area_code = digits[4:6]
+                self.exchange_number = digits[7:10]
+        else:
+            raise ValueError("Invalid number provided.")
     
     
 def read_numbers(path):
