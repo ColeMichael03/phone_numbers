@@ -93,6 +93,12 @@ class PhoneNumber:
         else:
             return int(self.line_number) < int(other.line_number)
         
+    def __repr__(self):
+        return f"PhoneNumber('{self.area_code}{self.exchange_number}{self.line_number}')"
+    
+    def __str__(self):
+        return f"({self.area_code}) {self.exchange_number}-{self.line_number}"
+        
 def read_numbers(path):
     
     contact_list = []
