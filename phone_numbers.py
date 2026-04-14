@@ -67,8 +67,8 @@ class PhoneNumber:
                 raise ValueError("Invalid number provided.")
             else:
                 self.area_code = digits[0:2]
-                self.area_code = digits[3:5]
-                self.exchange_number = digits[6:9]
+                self.exchange_number = digits[3:5]
+                self.line_number = digits[6:9]
          
         elif len(digits) == 11:
             
@@ -78,12 +78,21 @@ class PhoneNumber:
                 raise ValueError("Invalid number provided.")
             else:
                 self.area_code = digits[1:3]
-                self.area_code = digits[4:6]
-                self.exchange_number = digits[7:10]
+                self.exchange_number = digits[4:6]
+                self.line_number = digits[7:10]
         else:
             raise ValueError("Invalid number provided.")
     
-    
+    def __lt__(self, other):
+        if self.area_code != other.area_code:
+            return int(self.area_code) < int(other.area_code)
+        
+        elif self.exchange_number != other.exchange_number:
+            return int(self.exchange_number) < int(other.exchange_number)
+        
+        else:
+            return int(self.line_number) < int(other.line_number)
+        
 def read_numbers(path):
     
     contact_list = []
