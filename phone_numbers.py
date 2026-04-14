@@ -35,17 +35,54 @@ LETTER_TO_NUMBER = {
 
 # Replace this comment with your implementation of the PhoneNumber class and
 # the `read_numbers()` function.
-
+class PhoneNumber:
+    """
+    """
+    def __init__(self, p_num):
+        
+        #error handling
+        if not isinstance(p_num, (str, int)):
+            raise TypeError("INPUT MUST BE INT OR STR")
+        
+        #make phonenumber a str of capital letters
+        p_num = str(p_num).upper()
+        
+        #take everything that matches pattern, replace with digit from dict
+        digits = re.sub(r"[A-Z]", 
+                        lambda m: LETTER_TO_NUMBER[m.group()], p_num)
+        
+        #remove everything that is not a digit
+        digits = re.sub(r"\D", "", digits)
+        print(digits)
+        self.number = digits
+    
+    
 def read_numbers(path):
-    regex_reader = r"""
-    (?xm)
-    #everything before the tab
-    ^
-    (?P<name>[^\t]*)
-    \t
-    #the entire number
-    (?P<number>.*)
-     """
+    
+    contact_list = []
+    pattern = r"""
+            (?xm)
+            #everything before the tab
+            ^
+            (?P<name>[^\t]*)
+            \t
+            #the entire number
+            (?P<number>.*)
+            """
+            
+    with open(path, mode='r', encoding="UTF-8") as f:
+        for data in f:  
+            data = data.strip()
+            match = re.match(pattern, data)
+            
+            if match: 
+                name = match.group('name')
+                number = match.group('number')
+                
+            
+            
+            
+     
     
 
 def main(path):
