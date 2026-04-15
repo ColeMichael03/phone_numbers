@@ -37,6 +37,8 @@ LETTER_TO_NUMBER = {
 # the `read_numbers()` function.
 class PhoneNumber:
     """
+    Takes a phone number object containing a str and 
+    converts any letters to numbers then also removes any non digit chars
     """
     def __init__(self, p_num):
         
@@ -53,7 +55,7 @@ class PhoneNumber:
         
         #remove everything that is not a digit
         digits = re.sub(r"\D", "", digits)
-        print(digits)
+        
         self.number = digits
 
         #After we have just numbers, we need to do validation.
@@ -61,29 +63,43 @@ class PhoneNumber:
         #2.does area code / exchange code begin with 0 or 1 OR end in 11
         #need to do step 2 differently for 10 vs 11 length.
         if len(digits) == 10:
-            if(digits[0] == "0" or digits[0] == "1" or digits[1:2] == "11" or \
-                digits[3] == "0" or digits[3] == "1" or digits[4:5] == "11"):
+            if(digits[0] == "0" or digits[0] == "1" or digits[1:3] == "11" or \
+                digits[3] == "0" or digits[3] == "1" or digits[4:6] == "11"):
                 
                 raise ValueError("Invalid number provided.")
             else:
-                self.area_code = digits[0:2]
-                self.exchange_number = digits[3:5]
-                self.line_number = digits[6:9]
+                self.area_code = digits[0:3]
+                self.exchange_number = digits[3:6]
+                self.line_number = digits[6:]
          
         elif len(digits) == 11:
             
             if(digits[1] == "0" or digits[1] == "1" or digits[2:3] == "11" or \
-                digits[4] == "0" or digits[4] == "1" or digits[5:6] == "11"):
+                digits[4] == "0" or digits[4] == "1" or digits[5:6] == "11" or \
+                digits[0] != 1):
+                    
                 
                 raise ValueError("Invalid number provided.")
             else:
-                self.area_code = digits[1:3]
-                self.exchange_number = digits[4:6]
-                self.line_number = digits[7:10]
+                self.area_code = digits[1:4]
+                self.exchange_number = digits[4:7]
+                self.line_number = digits[7:]
         else:
             raise ValueError("Invalid number provided.")
     
     def __lt__(self, other):
+        """
+        Compare two PhoneNumber objects for ordering.
+
+        Numbers are compared in standard phone format order:
+        area code,exchange number,line number.
+
+        Args:
+            other (PhoneNumber): Another PhoneNumber object to compare against.
+
+        Returns:
+            bool: True if self comes before other, False otherwise.
+        """
         if self.area_code != other.area_code:
             return int(self.area_code) < int(other.area_code)
         
@@ -94,16 +110,33 @@ class PhoneNumber:
             return int(self.line_number) < int(other.line_number)
         
     def __repr__(self):
+        """
+        Takes PhoneNumber object and returns a formal str
+        """
         return f"PhoneNumber('{self.area_code}{self.exchange_number}{self.line_number}')"
     
     def __str__(self):
+        """
+        Takes a PhoneNumber object and returns a informal str. 
+        """
         return f"({self.area_code}) {self.exchange_number}-{self.line_number}"
         
 def read_numbers(path):
+    """Read data from a file and return sorted contact list (number, name)
+
+        Args:
+        path (str): path to a text file. Each line in the file should consist of
+            a name, a tab character, and a phone number.
+        
+        Side Effects: 
+        return a list of these tuples, 
+        sorted in ascending order by phone number 
+
+    """
+    
     
     contact_list = []
-    pattern = r"""
-            (?xm)
+    pattern = r"""(?xm)
             #everything before the tab
             ^
             (?P<name>[^\t]*)
@@ -113,14 +146,24 @@ def read_numbers(path):
             """
             
     with open(path, mode='r', encoding="UTF-8") as f:
-        for data in f:  
-            data = data.strip()
+        for line in f:  
+            data = line.strip()
             match = re.match(pattern, data)
             
             if match: 
                 name = match.group('name')
                 number = match.group('number')
+                try:
+                    phone = PhoneNumber(number)
+                    contact_list.append((name, phone))
+                except(TypeError, ValueError):
+                    continue
                 
+        contact_list.sort()
+                
+          
+                
+    return contact_list
             
             
             
