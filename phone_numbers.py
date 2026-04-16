@@ -39,8 +39,24 @@ class PhoneNumber:
     """
     Takes a phone number object containing a str and 
     converts any letters to numbers then also removes any non digit chars
+    
+    Attributes: Area_code, exchange_code, line_number
     """
     def __init__(self, p_num):
+        """
+
+        Args:
+            p_num: dirty phone number from read_number function 
+
+        Raises:
+            TypeError: if p_num not INT or STR
+            ValueError: If invalid number is provided 
+            
+        Side effects: 
+            Cleans and standardizes p_num 
+
+
+        """
         
         #error handling
         if not isinstance(p_num, (str, int)):
@@ -61,22 +77,29 @@ class PhoneNumber:
         #1. is the length 10 (or 11 AND starts with 1)
         #2.does area code / exchange code begin with 0 or 1 OR end in 11
         #need to do step 2 differently for 10 vs 11 length.
+        
         if len(digits) == 11:
-            digits = digits[1:]
-            
-            
-        if len(digits) == 10:
-            if(digits[0] == "0" or digits[0] == "1" or digits[1:3] == "11" or \
-                digits[3] == "0" or digits[3] == "1" or digits[4:6] == "11"):
+            if digits[0]== "1":
+                digits = digits[1:]
                 
-                raise ValueError("Invalid number provided.")
-            else:
-                self.area_code = digits[0:3]
-                self.exchange_number = digits[3:6]
-                self.line_number = digits[6:]
-         
-        else:
+            else: 
+                raise ValueError("Invalid number provided")
+        
+        if len(digits) != 10:
+            raise ValueError("Invalid number provided")
+            
+            
+        if(digits[0] == "0" or 
+           digits[0] == "1" or 
+           digits[1:3] == "11" or
+            digits[3] == "0" or 
+            digits[3] == "1" or 
+            digits[4:6] == "11"):
             raise ValueError("Invalid number provided.")
+        else:
+            self.area_code = digits[0:3]
+            self.exchange_code = digits[3:6]
+            self.line_number = digits[6:]
     
     def __lt__(self, other):
         """
@@ -94,8 +117,8 @@ class PhoneNumber:
         if self.area_code != other.area_code:
             return int(self.area_code) < int(other.area_code)
         
-        elif self.exchange_number != other.exchange_number:
-            return int(self.exchange_number) < int(other.exchange_number)
+        elif self.exchange_code != other.exchange_code:
+            return int(self.exchange_code) < int(other.exchange_code)
         
         else:
             return int(self.line_number) < int(other.line_number)
@@ -104,13 +127,13 @@ class PhoneNumber:
         """
         Takes PhoneNumber object and returns a formal str
         """
-        return f"PhoneNumber('{self.area_code}{self.exchange_number}{self.line_number}')"
+        return f"PhoneNumber('{self.area_code}{self.exchange_code}{self.line_number}')"
     
     def __str__(self):
         """
         Takes a PhoneNumber object and returns a informal str. 
         """
-        return f"({self.area_code}) {self.exchange_number}-{self.line_number}"
+        return f"({self.area_code}) {self.exchange_code}-{self.line_number}"
         
 def read_numbers(path):
     """Read data from a file and return sorted contact list (number, name)
@@ -119,7 +142,7 @@ def read_numbers(path):
         path (str): path to a text file. Each line in the file should consist of
             a name, a tab character, and a phone number.
         
-        Side Effects: 
+        Returns: 
         return a list of these tuples, 
         sorted in ascending order by phone number 
 
@@ -151,9 +174,11 @@ def read_numbers(path):
                     continue
                 
         sorted_contact_list = sorted(contact_list, key=lambda x: x[1])
+        sorted_contact_list = sorted(contact_list, key=lambda x: x[1])
                 
           
                 
+    return sorted_contact_list
     return sorted_contact_list
             
             
@@ -195,3 +220,4 @@ def parse_args(arglist):
 if __name__ == "__main__":
     args = parse_args(sys.argv[1:])
     main(args.file)
+
